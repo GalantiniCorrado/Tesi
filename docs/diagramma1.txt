@@ -1,0 +1,15 @@
+classDiagram
+    direction TB
+
+    class Model["Model (Mesa)"]
+    class Agent["Agent (Mesa)"]
+    class CellAgent["CellAgent (Mesa)"]
+    class FixedAgent["FixedAgent (Mesa)"]
+
+    Model <|-- EvacuationModel
+    Agent <|-- CellAgent
+    Agent <|-- FixedAgent
+    CellAgent <|-- Human
+    FixedAgent <|-- Wall
+    FixedAgent <|-- Exit
+    FixedAgent <|-- Fire
