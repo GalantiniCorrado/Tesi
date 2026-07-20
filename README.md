@@ -56,3 +56,4 @@ evacuation/
 - **Collisioni/affollamento**: limitare la capacità delle celle.
 - **Metriche**: reporters al `DataCollector` in `model.py`
   (tempo medio di fuga, distanza percorsa, ...).
+- **Robots**: aiutanti che dirigono e influenzano il comportamento degli agenti umani.
