@@ -44,10 +44,9 @@ class Human(CellAgent):
         return False
 
     def _move_towards_exit(self) -> None:
-        """L'agente conosce la planimetria (building.distance_map) e si
-        sposta sulla cella vicina piu' vicina a un'uscita. In caso di
-        parita' sceglie a caso, per non far muovere tutti in fila.
-        """
+        """L'agente conosce la planimetria (building.distance_map) e si sposta sulla cella vicina piu' vicina a un'uscita. 
+        In caso di parita' sceglie a caso, per non far muovere tutti in fila.
+        """ 
         distances = self.model.building.distance_map
         current = distances.get(self.cell.coordinate)
         if current is None:  # cella isolata: nessuna uscita raggiungibile

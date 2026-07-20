@@ -33,8 +33,7 @@ class Building:
 
     Espone:
     - walls / exits / floors: insiemi di coordinate (x, y)
-    - distance_map: distanza (in passi) di ogni cella calpestabile
-      dall'uscita piu' vicina. E' la "conoscenza della planimetria"
+    - distance_map: distanza (in passi) di ogni cella calpestabile dall'uscita piu' vicina. E' la "conoscenza della planimetria"
       che gli agenti usano per orientarsi.
     """
 

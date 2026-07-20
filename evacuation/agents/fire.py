@@ -28,13 +28,14 @@ class Fire(FixedAgent):
         self._try_spread()
 
     def _try_spread(self) -> None:
-        """Ogni cella di pavimento vicina non ancora incendiata ha una
-        probabilita' indipendente di incendiarsi a sua volta."""
+        """Ogni cella di pavimento vicina non ancora incendiata ha una probabilita' indipendente di incendiarsi a sua volta.
+        """
+        rng = self.model.fire_random
         for neighbor in self.cell.neighborhood:
-            if self._is_ignitable(neighbor) and self.random.random() < self.spread_probability:
+            if self._is_ignitable(neighbor) and rng.random() < self.spread_probability:
                 Fire(self.model, neighbor, self.spread_probability)
 
     def _is_ignitable(self, cell) -> bool:
-        if cell.coordinate not in self.model.building.floors:
+        if cell.coordinate not in self.model.building.floors:  # se e' un muro o un'uscita, non si incendia
             return False
-        return not any(isinstance(agent, Fire) for agent in cell.agents)
+        return not any(isinstance(agent, Fire) for agent in cell.agents) # se c'e' gia' un incendio, non si incendia di nuovo

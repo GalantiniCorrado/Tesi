@@ -3,6 +3,7 @@
 Avvio:  python -m solara run app.py 
 """
 
+from matplotlib.ticker import MaxNLocator
 from mesa.visualization import SolaraViz, SpaceRenderer, make_plot_component
 from mesa.visualization.components import AgentPortrayalStyle
 
@@ -24,6 +25,11 @@ def agent_portrayal(agent):
     if isinstance(agent, Human):
         return AgentPortrayalStyle(color="red", marker="o", size=45, zorder=2) # zorder=2 -> sopra a tutti gli altri agenti
     return AgentPortrayalStyle()
+
+
+def plot_post_process(ax):
+    ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+    ax.yaxis.set_major_locator(MaxNLocator(integer=True))
 
 
 model_params = {
@@ -56,12 +62,13 @@ renderer = SpaceRenderer(model, backend="matplotlib")
 renderer.setup_agents(agent_portrayal)
 renderer.draw_agents()
 
-page = SolaraViz(
+page = SolaraViz(  
     model,
     renderer,
     components=[
         make_plot_component(
-            {"Dentro l'edificio": "tab:red", "Evacuati": "tab:green", "Morti": "black"}
+            {"Dentro l'edificio": "tab:red", "Evacuati": "tab:green", "Morti": "black"},
+            post_process=plot_post_process,
         ),
     ],
     model_params=model_params,
