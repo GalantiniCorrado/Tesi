@@ -15,14 +15,14 @@ from evacuation.model import EvacuationModel
 
 def agent_portrayal(agent):
     if isinstance(agent, Wall):
-        return AgentPortrayalStyle(color="black", marker="s", size=110, zorder=1)
+        return AgentPortrayalStyle(color="black", marker="s", size=110, zorder=1) # (s -> square, o -> circle)
     if isinstance(agent, Exit):
-        return AgentPortrayalStyle(color="tab:green", marker="s", size=110, zorder=1)
+        return AgentPortrayalStyle(color="green", marker="s", size=110, zorder=1) 
     if isinstance(agent, Fire):
         color = "tab:orange" if agent.state == BURNING else "dimgray"
         return AgentPortrayalStyle(color=color, marker="s", size=90, zorder=1)
     if isinstance(agent, Human):
-        return AgentPortrayalStyle(color="tab:red", marker="o", size=45, zorder=2)
+        return AgentPortrayalStyle(color="red", marker="o", size=45, zorder=2) # zorder=2 -> sopra a tutti gli altri agenti
     return AgentPortrayalStyle()
 
 

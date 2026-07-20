@@ -6,10 +6,11 @@ planimetria e cercano di raggiungere l'uscita più vicina. Allo stesso tempo un 
 ## Avvio
 
 ```bash
+# Installazione delle dipendenze
+pip install -r requirements.txt
 
 # Interfaccia interattiva nel browser (http://localhost:8765)
 python -m solara run app.py
-
 ```
 
 ## Struttura del progetto
@@ -17,9 +18,11 @@ python -m solara run app.py
 ```
 app.py                     # Visualizzazione Solara 
 evacuation/
+    __init__.py            # marca la cartella come package Python
     model.py               # EvacuationModel: l'ORCHESTRATORE — crea mondo e agenti
     building.py            # Building: planimetria (muri, uscite) e mappa distanze
     agents/
+        __init__.py        # marca la cartella come package Python
         human.py           # Human: agente umano che fugge verso l'uscita
         wall.py            # Wall: agente statico, ostacolo
         exit.py            # Exit: agente statico, obiettivo
