@@ -1,0 +1,90 @@
+// Diagramma delle classi del progetto di evacuazione.
+// Rigenerare con:  dot -Tsvg docs/classes_full.dot -o docs/classes_full.svg
+//
+// Scritto a mano perche' pyreverse non riesce a estrarre le dipendenze
+// che vivono dentro i corpi dei metodi (Human->Fire, Fire->Fire, ...)
+// e non permette di filtrare gli attributi.
+
+digraph EvacuationClasses {
+    rankdir=TB;
+    graph [fontname="Helvetica", nodesep=0.5, ranksep=0.8];
+    node  [shape=record, fontname="Helvetica", fontsize=10, style=filled];
+    edge  [fontname="Helvetica", fontsize=9];
+
+    // ============ Framework Mesa ============
+    subgraph cluster_mesa {
+        label="Mesa (framework)";
+        labeljust="l";
+        style="rounded,dashed";
+        color="gray55";
+        fontname="Helvetica";
+        fontsize=11;
+        fontcolor="gray35";
+        node [fillcolor="#ECECEC"];
+
+        Model [label="{Model|+ running : bool\l+ steps : int\l+ random : Random\l+ agents_by_type : dict\l|+ register_agent(agent)\l+ step()\l}"];
+        Agent [label="{Agent|+ model : Model\l+ random : Random\l|+ remove()\l}"];
+        CellAgent [label="{CellAgent|+ cell : Cell  (riassegnabile)\l|+ remove()\l}"];
+        FixedAgent [label="{FixedAgent|+ cell : Cell  (immutabile)\l|+ remove()\l}"];
+        Cell [label="{Cell|+ coordinate : tuple\l+ agents : list\l+ neighborhood : CellCollection\l}"];
+        Grid [label="{OrthogonalMooreGrid|+ torus : bool\l|+ getitem(coord) : Cell\l}"];
+        DataCollector [label="{DataCollector|+ model_reporters : dict\l|+ collect(model)\l}"];
+    }
+
+    // ============ Infrastruttura del progetto ============
+    node [fillcolor="#D6E4F0"];
+
+    EvacuationModel [label="{EvacuationModel|+ building : Building\l+ grid : OrthogonalMooreGrid\l+ evacuated_count : int\l+ casualties_count : int\l|+ step()\l}"];
+
+    Building [label="{Building|+ walls : set\l+ exits : set\l+ floors : set\l+ distance_map : dict\l+ spawn_points : list\l|- _parse_floor_plan()\l- _compute_distance_map()\l+ is_walkable(coord) : bool\l}"];
+
+    // ============ Agenti ============
+    node [fillcolor="#DCEDC8"];
+
+    Human [label="{Human|+ cell : Cell\l+ speed : int\l|+ step()\l- _try_escape() : bool\l- _check_fire() : bool\l- _move_towards_exit()\l}"];
+
+    Fire [label="{Fire|+ cell : Cell\l+ spread_probability : float\l+ state : str\l|+ step()\l- _try_spread()\l- _is_ignitable(cell) : bool\l}"];
+
+    node [fillcolor="#F0F0C8"];
+    Wall [label="{Wall|+ cell : Cell\l}"];
+    Exit [label="{Exit|+ cell : Cell\l}"];
+
+    // ============ Ereditarieta' (triangolo vuoto) ============
+    edge [arrowhead=onormal, style=solid, color="#333333"];
+    EvacuationModel -> Model;
+    CellAgent  -> Agent;
+    FixedAgent -> Agent;
+    Human -> CellAgent;
+    Wall  -> FixedAgent;
+    Exit  -> FixedAgent;
+    Fire  -> FixedAgent;
+
+    // ============ Composizione (rombo pieno) ============
+    edge [dir=back, arrowtail=diamond, arrowhead=none, color="#1F4E79"];
+    EvacuationModel -> Building      [label="possiede"];
+    EvacuationModel -> Grid          [label="possiede"];
+    EvacuationModel -> DataCollector [label="possiede"];
+
+    // ============ Aggregazione (rombo vuoto) ============
+    edge [arrowtail=odiamond, color="#1F4E79"];
+    Grid -> Cell [label="contiene *"];
+
+    // ============ Associazione: occupazione di una cella ============
+    edge [dir=forward, arrowtail=none, arrowhead=vee, style=solid, color="#7F7F7F"];
+    CellAgent  -> Cell [label="occupa", constraint=false];
+    FixedAgent -> Cell [label="occupa", constraint=false];
+
+    // ============ Creazione (dipendenza tratteggiata) ============
+    edge [style=dashed, arrowhead=vee, color="#B45F06"];
+    EvacuationModel -> Human [label="istanzia N"];
+    EvacuationModel -> Wall  [label="istanzia N"];
+    EvacuationModel -> Exit  [label="istanzia N"];
+    EvacuationModel -> Fire  [label="innesca 1"];
+    Fire -> Fire [label="si propaga"];
+
+    // ============ Lettura a runtime (dipendenza tratteggiata) ============
+    edge [style=dashed, arrowhead=vee, color="#38761D"];
+    Human -> Building [label="distance_map, exits"];
+    Fire  -> Building [label="floors"];
+    Human -> Fire     [label="rileva su cell.agents"];
+}
